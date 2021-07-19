@@ -1,0 +1,24 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: HackComputer.hdl
+
+
+CHIP HackComputer {
+    IN reset;
+
+    PARTS:
+
+    /* Instruction memory */
+    ROM32K(address=pc, out=instruction);
+    
+    HackCPU(inM         = inM, 
+            instruction = instruction, 
+            reset       = reset, 
+            outM        = outM, 
+            writeM      = writeM, 
+            addressM    = addressM, 
+            pc          = pc);
+    
+    /* Data memory */
+    RAM64(in=outM, load=writeM, address=addressM, out=inM);
+}

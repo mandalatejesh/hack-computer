@@ -1,0 +1,41 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: HackALU.hdl
+// used in chip HackCPU
+
+/* Hack ALU :
+   input decription: 
+   16 bit inputs x and y and the following control signals:-
+          zx - zero x
+          zy - zero y
+          nx - negate x
+          ny - negate y
+          f  - if set to 1, (x+y) else (x&y)
+          no - negate output
+
+    output description: 
+    16 bit output along with zr which is set to 1 if output is zero, else 0
+    ng which is set to 1 if output is negative, 0 otherwise        
+*/
+
+CHIP HackALU {
+    IN x[16], y[16], zx, nx, zy, ny, f, no;
+    OUT out[16], zr, ng;
+
+    PARTS:
+
+    Mux16Bit(x = x, y = false, s = zx, out = x0Mux);
+    Xor16Bit(x = x0Mux, n = nx, y = p);
+
+    Mux16Bit(x = y, y = false, s = zy, out = y0Mux);
+    Xor16Bit(x = y0Mux, n = ny, y = q);
+
+    CLAadder16higher(x = p, y = q, control = false, isSigned = true, s = pqSum, overflow = of);/* 16 bit CLA adder using higher order propogate and generate terms */
+    
+    And16Bit(x = p, y = q, out = pANDq);
+
+    Mux16Bit(x = pANDq, y = pqSum, s = f, out = r);
+    Xor16Bit(x = r, n = no, y = out, y = out1, y[15] = ng);
+
+    Check0(in = out1, out = zr); 
+}

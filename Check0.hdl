@@ -1,0 +1,20 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: Check0.hdl
+// used in chip HackALU
+
+
+/* checks whether all the input bits are zero or not
+   out is 1 if all the input bits are zero, otherwise 0 */
+
+CHIP Check0 {
+    IN in[16];
+    OUT out;
+
+    PARTS:
+    Or5(x1=in[0], x2=in[1], x3=in[2], x4=in[3], x5=in[4], out=p1);
+    Or5(x1=in[5], x2=in[6], x3=in[7], x4=in[8], x5=in[9], out=p2);
+    Or5(x1=in[10], x2=in[11], x3=in[12], x4=in[13], x5=in[14], out=p3);
+    Or5(x1=p1, x2=p2, x3=p3, x4=in[15], x5=false, out=zero);
+    Not(in=zero, out=out);
+}

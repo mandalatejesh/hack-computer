@@ -1,0 +1,200 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: CLAadder16higher.hdl
+// used in chips HackALU
+
+
+/* 4-bit CLA based 16-bit adder using higher-level propagate and generate terms */
+
+CHIP CLAadder16higher{
+    IN x[16], y[16], control, isSigned; //control: 0 indicates addition, 1 indicates subtraction // isSigned: 0 indicates unsigned, 1 indicates signed
+    OUT s[16], overflow;        //overflow: 1 when there is overflow, 0 otherwise
+
+    PARTS:
+    
+    //if control is 1 i.e. subtraction, 1's complement of y is used
+    Xor(a=y[0], b=control, out=ycomp0);
+    Xor(a=y[1], b=control, out=ycomp1);
+    Xor(a=y[2], b=control, out=ycomp2);
+    Xor(a=y[3], b=control, out=ycomp3);
+    Xor(a=y[4], b=control, out=ycomp4);
+    Xor(a=y[5], b=control, out=ycomp5);
+    Xor(a=y[6], b=control, out=ycomp6);
+    Xor(a=y[7], b=control, out=ycomp7);
+    Xor(a=y[8], b=control, out=ycomp8);
+    Xor(a=y[9], b=control, out=ycomp9);
+    Xor(a=y[10], b=control, out=ycomp10);
+    Xor(a=y[11], b=control, out=ycomp11);
+    Xor(a=y[12], b=control, out=ycomp12);
+    Xor(a=y[13], b=control, out=ycomp13);
+    Xor(a=y[14], b=control, out=ycomp14);
+    Xor(a=y[15], b=control, out=ycomp15);
+
+    //computing pi and gi
+    Xor(a=x[0], b=ycomp0, out=p0);
+    Xor(a=x[1], b=ycomp1, out=p1);
+    Xor(a=x[2], b=ycomp2, out=p2);
+    Xor(a=x[3], b=ycomp3, out=p3);
+    Xor(a=x[4], b=ycomp4, out=p4);
+    Xor(a=x[5], b=ycomp5, out=p5);
+    Xor(a=x[6], b=ycomp6, out=p6);
+    Xor(a=x[7], b=ycomp7, out=p7);
+    Xor(a=x[8], b=ycomp8, out=p8);
+    Xor(a=x[9], b=ycomp9, out=p9);
+    Xor(a=x[10], b=ycomp10, out=p10);
+    Xor(a=x[11], b=ycomp11, out=p11);
+    Xor(a=x[12], b=ycomp12, out=p12);
+    Xor(a=x[13], b=ycomp13, out=p13);
+    Xor(a=x[14], b=ycomp14, out=p14);
+    Xor(a=x[15], b=ycomp15, out=p15);
+
+    And(a=x[0], b=ycomp0, out=g0);
+    And(a=x[1], b=ycomp1, out=g1);
+    And(a=x[2], b=ycomp2, out=g2);
+    And(a=x[3], b=ycomp3, out=g3);
+    And(a=x[4], b=ycomp4, out=g4);
+    And(a=x[5], b=ycomp5, out=g5);
+    And(a=x[6], b=ycomp6, out=g6);
+    And(a=x[7], b=ycomp7, out=g7);
+    And(a=x[8], b=ycomp8, out=g8);
+    And(a=x[9], b=ycomp9, out=g9);
+    And(a=x[10], b=ycomp10, out=g10);
+    And(a=x[11], b=ycomp11, out=g11);
+    And(a=x[12], b=ycomp12, out=g12);
+    And(a=x[13], b=ycomp13, out=g13);
+    And(a=x[14], b=ycomp14, out=g14);
+    And(a=x[15], b=ycomp15, out=g15);
+
+    //computing pIi
+    And5(x1=p0, x2=p1, x3=p2, x4=p3, x5=true, out=pI0);
+    And5(x1=p4, x2=p5, x3=p6, x4=p7, x5=true, out=pI1);
+    And5(x1=p8, x2=p9, x3=p10, x4=p11, x5=true, out=pI2);
+    And5(x1=p12, x2=p13, x3=p14, x4=p15, x5=true, out=pI3);
+
+    //computing gI0
+    And5(x1=g0, x2=p1, x3=p2, x4=p3, x5=true, out=gI01);
+    And5(x1=g1, x2=p2, x3=p3, x4=true, x5=true, out=gI02);
+    And(a=g2, b=p3, out=gI03);
+    Or5(x1=gI01, x2=gI02, x3=gI03, x4=g3, x5=false, out=gI0);
+
+    //computing gI1
+    And5(x1=g4, x2=p5, x3=p6, x4=p7, x5=true, out=gI11);
+    And5(x1=g5, x2=p6, x3=p7, x4=true, x5=true, out=gI12);
+    And(a=g6, b=p7, out=gI13);
+    Or5(x1=gI11, x2=gI12, x3=gI13, x4=g7, x5=false, out=gI1);
+
+    //computing gI2
+    And5(x1=g8, x2=p9, x3=p10, x4=p11, x5=true, out=gI21);
+    And5(x1=g9, x2=p10, x3=p11, x4=true, x5=true, out=gI22);
+    And(a=g10, b=p11, out=gI23);
+    Or5(x1=gI21, x2=gI22, x3=gI23, x4=g11, x5=false, out=gI2);
+
+    //computing gI3
+    And5(x1=g12, x2=p13, x3=p14, x4=p15, x5=true, out=gI31);
+    And5(x1=g13, x2=p14, x3=p15, x4=true, x5=true, out=gI32);
+    And(a=g14, b=p15, out=gI33);
+    Or5(x1=gI31, x2=gI32, x3=gI33, x4=g15, x5=false, out=gI3);
+
+    //computing c4
+    And(a=pI0, b=control, out=c40);
+    Or(a=c40, b=gI0, out=c4);
+
+    //computing c8
+    And5(x1=pI1, x2=pI0, x3=control, x4=true, x5=true, out=c80);
+    And(a=pI1, b=gI0, out=c81);
+    Or5(x1=c80, x2=c81, x3=gI1, x4=false, x5=false, out=c8);
+
+    //computing c12
+    And5(x1=pI2, x2=pI1, x3=pI0, x4=control, x5=true, out=c120);
+    And5(x1=pI2, x2=pI1, x3=gI0, x4=true, x5=true, out=c121);
+    And(a=pI2, b=gI1, out=c122);
+    Or5(x1=c120, x2=c121, x3=c122, x4=gI2, x5=false, out=c12);
+
+    //computing c16
+    And5(x1=pI3, x2=pI2, x3=pI1, x4=pI0, x5=control, out=c160);
+    And5(x1=pI3, x2=pI2, x3=pI1, x4=gI0, x5=true, out=c161);
+    And5(x1=pI3, x2=pI2, x3=gI1, x4=true, x5=true, out=c162);
+    And(a=pI3, b=gI2, out=c163);
+    Or5(x1=c160, x2=c161, x3=c162, x4=c163, x5=gI3, out=c16);
+
+    // computing c1 to c3
+    And(a=p0, b=control, out=c1a);
+    Or(a=c1a, b=g0, out=c1);
+
+    And5(x1=p1, x2=p0, x3=control, x4=true, x5=true, out=c2a);
+    And(a=p1, b=g0, out=c2b);
+    Or5(x1=c2a, x2=c2b, x3=g1, x4=false, x5=false, out=c2);
+
+    And5(x1=p2, x2=p1, x3=p0, x4=control, x5=true, out=c3a);
+    And5(x1=p2, x2=p1, x3=g0, x4=true, x5=true, out=c3b);
+    And(a=p2, b=g1, out=c3c);
+    Or5(x1=c3a, x2=c3b, x3=c3c, x4=g2, x5=false, out=c3);
+
+    // computing c5 to c7
+    And(a=p4, b=c4, out=c5a);
+    Or(a=c5a, b=g4, out=c5);
+
+    And5(x1=p5, x2=p4, x3=c4, x4=true, x5=true, out=c6a);
+    And(a=p5, b=g4, out=c6b);
+    Or5(x1=c6a, x2=c6b, x3=g5, x4=false, x5=false, out=c6);
+
+    And5(x1=p6, x2=p5, x3=p4, x4=c4, x5=true, out=c7a);
+    And5(x1=p6, x2=p5, x3=g4, x4=true, x5=true, out=c7b);
+    And(a=p6, b=g5, out=c7c);
+    Or5(x1=c7a, x2=c7b, x3=c7c, x4=g6, x5=false, out=c7);
+
+    // computing c9 to c11
+    And(a=p8, b=c8, out=c9a);
+    Or(a=c9a, b=g8, out=c9);
+
+    And5(x1=p9, x2=p8, x3=c8, x4=true, x5=true, out=c10a);
+    And(a=p9, b=g8, out=c10b);
+    Or5(x1=c10a, x2=c10b, x3=g9, x4=false, x5=false, out=c10);
+
+    And5(x1=p10, x2=p9, x3=p8, x4=c8, x5=true, out=c11a);
+    And5(x1=p10, x2=p9, x3=g8, x4=true, x5=true, out=c11b);
+    And(a=p10, b=g9, out=c11c);
+    Or5(x1=c11a, x2=c11b, x3=c11c, x4=g10, x5=false, out=c11);
+
+    // computing c13 to c15
+    And(a=p12, b=c12, out=c13a);
+    Or(a=c13a, b=g12, out=c13);
+
+    And5(x1=p13, x2=p12, x3=c12, x4=true, x5=true, out=c14a);
+    And(a=p13, b=g12, out=c14b);
+    Or5(x1=c14a, x2=c14b, x3=g13, x4=false, x5=false, out=c14);
+
+    And5(x1=p14, x2=p13, x3=p12, x4=c12, x5=true, out=c15a);
+    And5(x1=p14, x2=p13, x3=g12, x4=true, x5=true, out=c15b);
+    And(a=p14, b=g13, out=c15c);
+    Or5(x1=c15a, x2=c15b, x3=c15c, x4=g14, x5=false, out=c15);
+
+    //computing s[0] to s[15]
+    Xor(a=control, b=p0, out=s[0]);
+    Xor(a=c1, b=p1, out=s[1]);
+    Xor(a=c2, b=p2, out=s[2]);
+    Xor(a=c3, b=p3, out=s[3]);
+    Xor(a=c4, b=p4, out=s[4]);
+    Xor(a=c5, b=p5, out=s[5]);
+    Xor(a=c6, b=p6, out=s[6]);
+    Xor(a=c7, b=p7, out=s[7]);
+    Xor(a=c8, b=p8, out=s[8]);
+    Xor(a=c9, b=p9, out=s[9]);
+    Xor(a=c10, b=p10, out=s[10]);
+    Xor(a=c11, b=p11, out=s[11]);
+    Xor(a=c12, b=p12, out=s[12]);
+    Xor(a=c13, b=p13, out=s[13]);
+    Xor(a=c14, b=p14, out=s[14]);
+    Xor(a=c15, b=p15, out=s[15]);
+
+    //overflow detection logic for unsigned input
+    Or(a=control, b=isSigned, out=w1);
+    Not(in=w1, out=notw1);
+    And(a=notw1, b=c16, out=unsignedOverflow);
+
+    //overflow detection logic for signed input
+    Xor(a=c16, b=c15, out=w2);
+    And(a=w2, b=isSigned, out=signedOverflow);
+
+    Or(a=unsignedOverflow, b=signedOverflow, out=overflow);
+}

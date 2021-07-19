@@ -1,0 +1,17 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: Mux16Bit4to1.hdl
+// used in ProgCounter
+
+
+/* 16 bit 4-to-1 Multiplexor with s0, s1 as the selection bits */
+
+CHIP Mux16Bit4to1 {
+    IN x1[16], x2[16], x3[16], x4[16], s0, s1;
+    OUT out[16];
+
+    PARTS:
+    Mux16Bit(x=x1, y= x2, s=s0, out=out1);
+    Mux16Bit(x=x3, y=x4, s=s0, out=out2);
+    Mux16Bit(x=out1, y=out2, s=s1, out=out);
+}

@@ -1,0 +1,31 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: Xor16Bit.hdl
+// used in chip HackALU
+
+
+/* 16 bit xor: ith bit of y(output) is the Xor of ith bit of x(input) and n */
+
+CHIP Xor16Bit {
+    IN x[16], n;
+    OUT y[16];
+
+    PARTS:
+
+    Xor(a=x[0], b=n, out=y[0]);
+    Xor(a=x[1], b=n, out=y[1]);
+    Xor(a=x[2], b=n, out=y[2]);
+    Xor(a=x[3], b=n, out=y[3]);
+    Xor(a=x[4], b=n, out=y[4]);
+    Xor(a=x[5], b=n, out=y[5]);
+    Xor(a=x[6], b=n, out=y[6]);
+    Xor(a=x[7], b=n, out=y[7]);
+    Xor(a=x[8], b=n, out=y[8]);
+    Xor(a=x[9], b=n, out=y[9]);
+    Xor(a=x[10], b=n, out=y[10]);
+    Xor(a=x[11], b=n, out=y[11]);
+    Xor(a=x[12], b=n, out=y[12]);
+    Xor(a=x[13], b=n, out=y[13]);
+    Xor(a=x[14], b=n, out=y[14]);
+    Xor(a=x[15], b=n, out=y[15]);
+}

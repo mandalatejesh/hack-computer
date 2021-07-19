@@ -1,0 +1,116 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: HackCPU.hdl
+// used in chip HackComputer
+
+/*********************************************************************************************************************** 
+ * The central processing unit (CPU).
+ * INPUT specification: inM[16]         - contents of RAM[A]
+ *                      instruction[16] - instruction for execution.
+ *                      reset           - if set to 1, then the cpu is reset to initial state 
+ *                                        else it continues executing the next instruction.
+ * OUTPUT specification: outM[16]       - output value of the cpu.
+ *                       writeM         - control signal for write command.
+ *                       addressM[6]    - address of the location where the output is to be written.
+ *                       pc[15]         - program counter - address of the next instruction to be executed.   
+ * Consists of an  ALU and a set of registers to fetch and execute instructions written in the hack machine language. 
+ *
+ ***********************************************************************************************************************/
+
+CHIP HackCPU {
+
+    IN  inM[16],         // M value input  (M = contents of RAM[A])
+        instruction[16], // Instruction for execution
+        reset;           // Signals whether to re-start the current
+                         // program (reset==1) or continue executing
+                         // the current program (reset==0).
+
+    OUT outM[16],        // M value output
+        writeM,          // Write into M? 
+        addressM[6],    // RAM address (of M)
+        pc[15];          // ROM address (of next instruction)
+
+    PARTS:
+    
+    /* write signal for A register */
+    Not(in=instruction[15], out=s1, out = writeA0); 
+    And(a=instruction[15], b=instruction[5], out=writeA1);
+    Or(a=writeA0, b=writeA1, out=writeA);
+
+    /* write signal for D register */
+    And(a=instruction[15], b=instruction[4], out=writeD);
+
+    /* control signal for MUX2 */
+    And(a=instruction[15], b=instruction[12], out=s2);
+
+    /* instruction decoder: write signal for data Memory */
+    And(a=instruction[15], b=instruction[3], out=writeM);
+    
+    /* select line for A register */
+    Mux16Bit(x=ALUout, y=instruction, s=s1, out=inA);
+    
+    /* BUILTIN chip ARegister is used */
+    ARegister(in=inA, load=writeA, out=Aout, out[0..5]=addressM);
+    
+    /* select line for y operand of ALU */
+    Mux16Bit(x=Aout, y=inM, s=s2, out=yALU);
+
+    /* BUILTIN DRegister is used */
+    DRegister(in=ALUout, load=writeD, out=xALU);    
+    
+
+    HackALU(x=xALU, 
+            y  = yALU, 
+            zx = instruction[11], 
+            nx = instruction[10], 
+            zy = instruction[9], 
+            ny = instruction[8], 
+            f  = instruction[7], 
+            no = instruction[6], 
+            out= ALUout, 
+            out= outM, 
+            zr = zr, 
+            ng = ng);
+            
+            
+    /* evaluating j for use in program counter */
+    Not(in=instruction[2], out=notj1);//since instruction[2] is j1
+    Not(in=instruction[1], out=notj2);//since instruction[1] is j2
+    Not(in=instruction[0], out=notj3);//since instruction[0] is j3
+    Not(in=zr, out=notzr);
+    Not(in=ng, out=notng);
+    
+    
+    /* jmp = j1.j2.j3 */
+    And5(x1=instruction[2], x2=instruction[1], x3=instruction[0], x4=true, x5=true, out=jmp);
+
+    /* jgt = notj1.notj2.j3.notzr.notng */
+    And5(x1=notj1, x2=notj2, x3=instruction[0], x4=notzr, x5=notng, out=jgt);
+
+    /* jeq = notj1.j2.notj3.zr */
+    And5(x1=notj1, x2=instruction[1], x3=notj3, x4=zr, x5=true, out=jeq);
+
+    /* jge = notj1.j2.j3.(zr+notng) */
+    Or(a=zr, b=notng, out=jumpGe);
+    And5(x1=notj1, x2=instruction[1], x3=instruction[0], x4=jumpGe, x5=true, out=jge);
+
+    /* jlt = j1.notj2.notj3.notzr.ng */
+    And5(x1=instruction[2], x2=notj2, x3=notj3, x4=notzr, x5=ng, out=jlt);
+
+    /* jne = j1.notj2.j3.notzr */
+    And5(x1=instruction[2], x2=notj2, x3=instruction[0], x4=notzr, x5=true, out=jne);
+
+    /* jle = j1.j2.notj3.(zr+ng) */
+    Or(a=zr, b=ng, out=jumpLe);
+    And5(x1=instruction[2], x2=instruction[1], x3=notj3, x4=jumpLe, x5=true, out=jle);
+
+    /* J = I15.(jmp+jgt+jeq+jge+jlt+jne+jle) */
+    Or7(x1=jmp, x2=jgt, x3=jeq, x4=jge, x5=jlt, x6=jne, x7=jle, out=j0);
+    And(a=j0, b=instruction[15], out=J);
+    
+    /* update contents of program counter register */
+    ProgCounter(J     = J,
+                reset = reset, 
+                Aout  = Aout, 
+                AdderOut[0..14] = pc);
+}

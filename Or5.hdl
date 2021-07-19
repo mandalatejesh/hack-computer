@@ -1,0 +1,16 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: Or5.hdl
+
+/* chip to output the OR of five input bits at once */
+
+CHIP Or5{
+    IN x1, x2, x3, x4, x5;
+    OUT out;
+
+    PARTS:
+    Or(a=x1, b=x2, out=y1);
+    Or(a=y1, b=x3, out=y2);
+    Or(a=y2, b=x4, out=y3);
+    Or(a=y3, b=x5, out=out);
+}

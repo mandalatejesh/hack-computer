@@ -1,0 +1,23 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: ProgCounter.hdl
+
+/* maintains the address of the next operation to be executed in the PC register */
+
+CHIP ProgCounter{
+    IN  J,             // jump control signal
+        reset,         // reset signal to reset the contents of the PC
+        Aout[16],      // output from ALU
+        AdderOut[16];  // incremented address of the current instruction
+        
+    OUT AdderOut[16];
+
+    PARTS:
+    
+    Mux16Bit4to1(x1=AdderOut1, x2=Aout, x3=false, x4=false, s0=J, s1=reset, out=PCin);
+    
+    Not(in=J, out=PCinc);
+
+    PC(in=PCin, load=J, inc=PCinc, reset=reset, out=AdderOut1, out=AdderOut);
+
+}

@@ -1,0 +1,67 @@
+// This file is a part of Assignment 8
+// by Team 12 - Mandala Tejesh, Madhav Mittal, Kshitij Raj
+// file name: Mux16Bit.hdl
+// used in chip HackALU and HackCPU
+
+
+/* 16 bit 2-to-1 Multiplexor with s as the selection bit */
+
+CHIP Mux16Bit {
+    IN x[16], y[16], s;
+    OUT out[16];
+
+    PARTS:
+
+    Not(in=s, out=nots);
+
+    And(a=x[0], b=nots, out=xAndnots0);
+    And(a=x[1], b=nots, out=xAndnots1);
+    And(a=x[2], b=nots, out=xAndnots2);
+    And(a=x[3], b=nots, out=xAndnots3);
+    And(a=x[4], b=nots, out=xAndnots4);
+    And(a=x[5], b=nots, out=xAndnots5);
+    And(a=x[6], b=nots, out=xAndnots6);
+    And(a=x[7], b=nots, out=xAndnots7);
+    And(a=x[8], b=nots, out=xAndnots8);
+    And(a=x[9], b=nots, out=xAndnots9);
+    And(a=x[10], b=nots, out=xAndnots10);
+    And(a=x[11], b=nots, out=xAndnots11);
+    And(a=x[12], b=nots, out=xAndnots12);
+    And(a=x[13], b=nots, out=xAndnots13);
+    And(a=x[14], b=nots, out=xAndnots14);
+    And(a=x[15], b=nots, out=xAndnots15);
+
+    And(a=y[0], b=s, out=yAnds0);
+    And(a=y[1], b=s, out=yAnds1);
+    And(a=y[2], b=s, out=yAnds2);
+    And(a=y[3], b=s, out=yAnds3);
+    And(a=y[4], b=s, out=yAnds4);
+    And(a=y[5], b=s, out=yAnds5);
+    And(a=y[6], b=s, out=yAnds6);
+    And(a=y[7], b=s, out=yAnds7);
+    And(a=y[8], b=s, out=yAnds8);
+    And(a=y[9], b=s, out=yAnds9);
+    And(a=y[10], b=s, out=yAnds10);
+    And(a=y[11], b=s, out=yAnds11);
+    And(a=y[12], b=s, out=yAnds12);
+    And(a=y[13], b=s, out=yAnds13);
+    And(a=y[14], b=s, out=yAnds14);
+    And(a=y[15], b=s, out=yAnds15);
+
+    Or(a=xAndnots0, b=yAnds0, out=out[0]);
+    Or(a=xAndnots1, b=yAnds1, out=out[1]);
+    Or(a=xAndnots2, b=yAnds2, out=out[2]);
+    Or(a=xAndnots3, b=yAnds3, out=out[3]);
+    Or(a=xAndnots4, b=yAnds4, out=out[4]);
+    Or(a=xAndnots5, b=yAnds5, out=out[5]);
+    Or(a=xAndnots6, b=yAnds6, out=out[6]);
+    Or(a=xAndnots7, b=yAnds7, out=out[7]);
+    Or(a=xAndnots8, b=yAnds8, out=out[8]);
+    Or(a=xAndnots9, b=yAnds9, out=out[9]);
+    Or(a=xAndnots10, b=yAnds10, out=out[10]);
+    Or(a=xAndnots11, b=yAnds11, out=out[11]);
+    Or(a=xAndnots12, b=yAnds12, out=out[12]);
+    Or(a=xAndnots13, b=yAnds13, out=out[13]);
+    Or(a=xAndnots14, b=yAnds14, out=out[14]);
+    Or(a=xAndnots15, b=yAnds15, out=out[15]);
+}
